@@ -69,14 +69,12 @@ set error_list [list]
 		ad_return_complaint 1 "Date doesn't have the right format.<br>"
 	    }
 	    if { "" != $payment_date($cost_id) && ![regexp {[0-9][0-9][0-9][0-9]\-[0-9][0-9]\-[0-9][0-9]} [textdate_to_ansi $payment_date($cost_id)]] } {
-		ad_return_complaint 1 "Start Date doesn't have the right format.
-		 Current value: '$payment_date($cost_id)'"
+		ad_return_complaint 1 "Start Date doesn't have the right format. Current value: '$payment_date($cost_id)'"
 	    } else {
-     		   set payment_date_cost $payment_date($cost_id)
+     		   set payment_date_cost [textdate_to_ansi $payment_date($cost_id)]
 	    }
 
 	    if {[catch {
-
 		set provider_id $provider($cost_id)
 		set payment_id [db_nextval "im_payments_id_seq"]
 
