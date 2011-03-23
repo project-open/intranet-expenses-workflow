@@ -364,7 +364,8 @@ db_foreach sql $sql {
 	} else {
 	    append payment_html [im_category_from_id $cost_status_id]
 	    if { $cost_status_id == [im_cost_status_paid] } {
-		set payed_date [lc_time_fmt [db_string get_view_id "select received_date from im_payments where cost_id=:cost_id order by received_date limit 1" -default "1980-01-01"] "%x" locale]
+		# im_payments might contain multiple payments, currently only one payement is supported
+		set payed_date [lc_time_fmt [db_string get_view_id "select received_date from im_payments where cost_id=:cost_id order by last_modified ASC limit 1" -default "1980-01-01"] "%x" locale]
 		append payment_html "&nbsp; $payed_date"  
 	    }
 	}
@@ -420,7 +421,7 @@ im_report_render_row \
 switch $output_format {
     html  {
 	set hidden_vars [export_form_vars start_date_form end_date_form output_format cost_status_id_form employee_id_form]	
-	ns_write "<tr><td colspan='999' align='right'><input value='[_ intranet-core.Submit]' type='submit'></td></tr></table>\n $hidden_vars\n</form> [im_footer]\n"}
+	ns_write "<tr><td colspan='999' align='right'><input value='Update marked records' type='submit'></td></tr></table>\n $hidden_vars\n</form> [im_footer]\n"}
     }
 
 ns_write [append reimbursement_output_table "<br><br><br>"]
