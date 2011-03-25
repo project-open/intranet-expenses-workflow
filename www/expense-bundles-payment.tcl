@@ -193,6 +193,7 @@ select
 		) t
 	) as sum_amount_reimbursable,
 	c.cost_status_id,
+	(select received_date from im_payments p where p.cost_id = c.cost_id order by last_modified DESC limit 1) as received_date,
 	$currency_clause	
 from 
         im_costs c
@@ -214,11 +215,10 @@ set employee_subtotal_vat_reimburse 0
 # -------------------------------------------------------------------------------------------------
 # Global header/footer
 
-# set header0 {"Employee" "Bundle" "Owed to employee" "Total" "AUD" "CAD" "CHF" "EUR" "GBP" "JPY" "USD"}
 set header0 ""
 set header0_string "\"Employee\" \"Bundle\" \"Owed to employee\" \"Total\" "
 append header0_string $currency_columns 
-append header0_string "\"Payment Status\""
+append header0_string "\"Payment Status\" \"Date\" "
 set header0 $header0_string
 
 set total_amount_reimbursable ""
@@ -257,7 +257,8 @@ append report_def_string "                                    \"<a href='\$expen
 append report_def_string "                                     \"\$sum_amount_reimbursable\""
 append report_def_string "                                     \"\$amount_incl_vat\" "
 append report_def_string $currency_var_columns
-append report_def_string "\$payment_html"
+append report_def_string "\"\$payment_status\" "
+append report_def_string "\"\$payment_html\" "
 append report_def_string "                                 } \ "
 append report_def_string "                                content {} \ "
 append report_def_string "                                 footer {} \ "
@@ -358,17 +359,14 @@ set tmp_output ""
 set payment_html ""
 
 db_foreach sql $sql {
+	set payment_status [im_category_from_id $cost_status_id]
     	if { [im_cost_status_paid]!=$cost_status_id } {
 	    append payment_html "<input name='payment_date.$cost_id' type='text' size='10' value='[lc_time_fmt $todays_date "%x" locale]'>&nbsp;<input type='checkbox' name='payed_p.$cost_id' value='$cost_id'/>"
-	    append payment_html "<input name='provider.$cost_id' type='hidden' value='$employee_id'>"		
 	} else {
-	    append payment_html [im_category_from_id $cost_status_id]
-	    if { $cost_status_id == [im_cost_status_paid] } {
-		# im_payments might contain multiple payments, currently only one payement is supported
-		set payed_date [lc_time_fmt [db_string get_view_id "select received_date from im_payments where cost_id=:cost_id order by last_modified ASC limit 1" -default "1980-01-01"] "%x" locale]
-		append payment_html "&nbsp; $payed_date"  
-	    }
+	    append payment_html "<input name='payment_date.$cost_id' type='text' size='10' value='[lc_time_fmt $received_date "%x" locale]'style='background-color: #DDD;'>"
+	    append payment_html "&nbsp;<input type='checkbox' name='payed_p.$cost_id' value='$cost_id'/>"
 	}
+	append payment_html "<input name='provider.$cost_id' type='hidden' value='$employee_id'>"		
 
 	im_report_display_footer \
 	    -output_format $output_format \
