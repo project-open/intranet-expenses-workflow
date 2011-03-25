@@ -26,6 +26,7 @@ ad_page_contract {
     payment_amount:array,float,optional
     payment_date:array,optional
     provider:array,integer,optional
+    cost_status_id:array,integer,optional
     return_url:optional 
 }
 
@@ -76,13 +77,14 @@ set error_list [list]
 
 	    if {[catch {
 		set provider_id $provider($cost_id)
+                set cost_status_id_var $cost_status_id($cost_id)
 		set payment_id [db_nextval "im_payments_id_seq"]
-
 		db_dml update_cost_status "
 			update	im_costs
-			set	cost_status_id = [im_cost_status_paid]
+			set	cost_status_id = $cost_status_id_var
 			where	cost_id = :cost_id
 		"
+                db_dml delete_payment "delete from im_payments where cost_id = :cost_id"
 		db_dml payment_update "
 	        	insert into im_payments
 		        (

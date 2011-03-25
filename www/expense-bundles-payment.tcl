@@ -218,7 +218,7 @@ set employee_subtotal_vat_reimburse 0
 set header0 ""
 set header0_string "\"Employee\" \"Bundle\" \"Owed to employee\" \"Total\" "
 append header0_string $currency_columns 
-append header0_string "\"Payment Status\" \"Date\" "
+append header0_string "\"Payment Status\" \"Date payed\" "
 set header0 $header0_string
 
 set total_amount_reimbursable ""
@@ -359,7 +359,10 @@ set tmp_output ""
 set payment_html ""
 
 db_foreach sql $sql {
-	set payment_status [im_category_from_id $cost_status_id]
+
+#	set payment_status [im_category_from_id $cost_status_id]
+    	set payment_status [im_cost_status_select cost_status_id.$cost_id $cost_status_id]
+
     	if { [im_cost_status_paid]!=$cost_status_id } {
 	    append payment_html "<input name='payment_date.$cost_id' type='text' size='10' value='[lc_time_fmt $todays_date "%x" locale]'>&nbsp;<input type='checkbox' name='payed_p.$cost_id' value='$cost_id'/>"
 	} else {
