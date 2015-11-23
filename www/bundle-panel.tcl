@@ -84,7 +84,7 @@ if {[info exists task]} {
 # ---------------------------------------------------------------
 
 set transition_key [db_string transition_key "select transition_key from wf_tasks where task_id = :task_id" -default ""]
-set current_user_id [ad_maybe_redirect_for_registration]
+set current_user_id [auth::require_login]
 set object_name [db_string name "select acs_object__name(:bundle_id)"]
 
 # ---------------------------------------------------------------

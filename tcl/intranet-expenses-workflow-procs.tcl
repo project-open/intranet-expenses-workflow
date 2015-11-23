@@ -32,7 +32,7 @@ ad_proc -public im_expenses_workflow_spawn_workflow {
     # Setup & Defaults
 
     set wf_user_id $user_id
-    set user_id [ad_maybe_redirect_for_registration]
+    set user_id [auth::require_login]
 
     # ---------------------------------------------------------------
     # Check if the WF-Key is valid
