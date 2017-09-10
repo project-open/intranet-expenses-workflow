@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<message_catalog package_key="intranet-expenses-workflow" locale="pl_PL" charset="utf-8">
+
+  <msg key="Manage_Expense_Bundle_Payments">Zarządzaj płatnościami dla pakietów wydatków</msg>
+  <msg key="Request_Expense_Bundle">Wniosek o pakiet wydatków</msg>
+  <msg key="Start_Confirmation_Workflow">Uruchom zatwierdzanie</msg>
+</message_catalog>
