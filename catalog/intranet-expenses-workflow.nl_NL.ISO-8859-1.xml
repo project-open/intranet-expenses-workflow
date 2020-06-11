@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <message_catalog package_key="intranet-expenses-workflow" locale="nl_NL" charset="ISO-8859-1">
 
+  <msg key="Manage_Expense_Bundle_Payments">Beheer onkosten bundel betalingen</msg>
   <msg key="Request_Expense_Bundle">Request Expense Bundle</msg>
+  <msg key="Start_Confirmation_Workflow">Start bevestigen workflow</msg>
 </message_catalog>
